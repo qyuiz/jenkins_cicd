@@ -35,9 +35,18 @@ class BuildXmlPerser:
         パッチセットIDを返します
         """
         # revisionから先頭7文字を抜き出す
-        return (self.xml_dict["actions"]["hudson.model.CauseAction"]["causeBag"]
-                ["entry"]["com.sonyericsson.hudson.plugins.gerrit.trigger.hudsontrigger.GerritCause"]
-                ["tEvent"]["patchSet"]["revision"][:7])
+        return self.get_gerrit_trigger_parameter("GERRIT_PATCHSET_REVISION")[:7]
+    
+    def get_gerrit_trigger_parameter(self, parameter_name):
+        """
+        指定されたパラメータ名の値を返します
+        """
+        parameter_list = (self.xml_dict["actions"]["hudson.model.ParametersAction"]
+                            ["parameters"]["hudson.model.StringParameterValue"])
+        for parameter_dict in parameter_list:
+            if parameter_dict["name"] == parameter_name:
+                return parameter_dict["value"]
+        return ""
 
 
 
@@ -46,3 +55,4 @@ xml_file_path = "sample_data/build.xml"
 build_xml = BuildXmlPerser(xml_path=xml_file_path)
 print("comment:", build_xml.get_gerrit_trigger_review_comment())
 print("patchSetID:", build_xml.get_gerrit_trigger_patchset_id())
+print(build_xml.get_gerrit_trigger_parameter("GERRIT_PATCHSET_REVISION"))
