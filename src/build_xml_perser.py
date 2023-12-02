@@ -65,6 +65,20 @@ class BuildXmlPerser:
             if parameter_dict["name"] == parameter_name:
                 return parameter_dict["value"]
         return ""
+    
+    def get_gerrit_trriger_commit_user_info(self):
+        """
+        ユーザー情報を返します
+
+        return:
+            'name': 'Administrator',
+            'email': 'admin@example.com',
+            'username': 'admin'
+        """
+        user_info = (self.xml_dict["actions"]["hudson.model.CauseAction"]["causeBag"]
+                ["entry"]["com.sonyericsson.hudson.plugins.gerrit.trigger.hudsontrigger.GerritCause"]
+                ["tEvent"]["account"])
+        return user_info
 
 
 
@@ -75,3 +89,8 @@ print("comment:", build_xml.get_gerrit_trigger_review_comment())
 print("patchSetID:", build_xml.get_gerrit_trigger_patchset_id())
 print("repoName:", build_xml.get_gerrit_trigger_repo_name())
 print("reviewURL:", build_xml.get_gerrit_trigger_review_url())
+userInfo = build_xml.get_gerrit_trriger_commit_user_info()
+print("userInfo:", userInfo)
+print("name:", userInfo["name"])
+print("email:", userInfo["email"])
+print("username:", userInfo["username"])
